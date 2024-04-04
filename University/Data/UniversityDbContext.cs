@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UniversityWeb.Entities;
+using University.Models.InstructionViewModels;
 
 namespace University.Data
 {

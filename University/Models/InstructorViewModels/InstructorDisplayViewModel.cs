@@ -1,6 +1,6 @@
 ﻿namespace University.Models.InstructionViewModels
 {
-    public class InstructionDisplayViewModel
+    public class InstructorDisplayViewModel
     {
         public int Id { get; set; }
         public string FullName { get; set; }
