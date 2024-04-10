@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UniversityWeb.Entities;
-using University.Models.InstructionViewModels;
+using University.Models.InstructorViewModels;
 using University.Models.DepartmentViewModels;
 
 namespace University.Data

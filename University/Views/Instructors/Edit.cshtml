@@ -1,50 +1,44 @@
-﻿@using University.Models.InstructorViewModels;
-@model InstructorActionViewModel
+﻿@model University.Models.InstructorViewModels.InstructorActionViewModel;
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 
-<h2>Create Instructor</h2>
+<h2>Edit Instructor</h2>
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger" ></div>
+            <input asp-for="Id" type="hidden"/>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
+                <input class="form-control" asp-for="FirstName" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
+            </div> 
             <div class="form-group">
                 <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
+                <input class="form-control" asp-for="LastName" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
+                <input class="form-control" asp-for="Email" />
                 <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+            </div> 
             <div class="form-group">
-                <label class="form-control-plaintext"></label>
+                <label asp-for="DepartmentId" class="form-control-plaintext"></label>
                 <select asp-for="DepartmentId" class="form-control" asp-items="@ViewBag.Departments"></select>
                 <span asp-validation-for="DepartmentId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+            <div> <input type="submit" class="btn btn-warning" value="Edit"/></div>
         </form>
-
     </div>
 </div>
-
-
 <div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
+    <a asp-action="Index" >Back to list</a>  
+ </div>
+ @section Scripts{
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-}
+ }
