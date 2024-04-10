@@ -19,10 +19,22 @@ namespace University.Services
 
         public async Task<InstructorDisplayViewModel> Create(InstructorActionViewModel instructor)
         {
-            var instructorNew = await _context.Instructors.AddAsync(instructor.ConvertToInstructor());
-            await _context.SaveChangesAsync();
+            var entity = instructor.ConvertToInstructor();
+            if (entity is null)
+            {
+                throw new EntityNotFoundException();
+            }
+            try
+            {
+                _context.Instructors.Add(entity);
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                throw new Exception();
+            }
 
-            return instructorNew.Entity.ConvertToViewModel();
+            return null;
         }
 
         public async Task Delete(int id)
@@ -51,7 +63,7 @@ namespace University.Services
             return entity.ConvertToViewModel();
         }
 
-        public async Task<IEnumerable<InstructorDisplayViewModel>> GetInstructors(string? searchString,string? sortOrder, int? departmentId)
+        public async Task<IEnumerable<InstructorDisplayViewModel>> GetInstructors(int? departmentId, string? searchString,string? sortOrder)
         {
             var query = _context.Instructors.Include(i => i.Department).AsQueryable();
 

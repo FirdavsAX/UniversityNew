@@ -4,59 +4,29 @@ using Microsoft.EntityFrameworkCore;
 using University.Data;
 using University.Mappings;
 using University.Models.InstructorViewModels;
+using University.Services;
 using UniversityWeb.Entities;
 
 namespace University.Controllers
 {
     public class InstructorsController : Controller
     {
+        private readonly IInstructorService _instructorService;
         private readonly UniversityDbContext _context;
-        public InstructorsController(UniversityDbContext _context)
+        public InstructorsController(UniversityDbContext _context,IInstructorService service)
         {
+            this._instructorService = service;
             this._context = _context;
         }
 
         public async Task<IActionResult> Index(int? departmentId,string? searchString,string? sortOrder)
         {
-
-            var query = _context.Instructors.Include(i => i.Department).AsQueryable();
-
+            
             ViewData["NameSort"] = sortOrder == "name_asc" ? "name_desc" : "name_asc";
             ViewData["DepartmentSort"] = sortOrder == "department_asc" ? "department_desc" : "department_asc";
             ViewData["EmailSort"] = sortOrder == "email_asc" ? "email_desc" : "email_asc";
 
-            if (!string.IsNullOrWhiteSpace(searchString))
-            {
-                query = query.Where(i => i.FirstName.Contains(searchString) || i.LastName.Contains(searchString)
-                    || i.Email.Contains(searchString) || i.Department.Name.Contains(searchString));
-            }
-            if (departmentId.HasValue)
-            {
-                query = query.Where(i => i.DepartmentId == departmentId);
-            }
-
-            switch (sortOrder)
-            {
-                case "name_asc":  
-                    query = query.OrderBy(i => i.FirstName); break;
-
-                case "name_desc": 
-                    query = query.OrderByDescending(i => i.FirstName); break;
-
-                case "department_asc":
-                    query = query.OrderBy(i => i.Department.Name); break;
-
-                case "department_desc":
-                    query = query.OrderByDescending(i => i.Department.Name); break;
-
-                case "email_asc": 
-                    query = query.OrderBy(i => i.Email); break;
-
-                case "email_desc":
-                    query = query.OrderByDescending(i => i.Email); break;
-            }
-
-            var instructors = await query.Select(i => i.ConvertToViewModel()).ToListAsync();
+            var instructors = await _instructorService.GetInstructors(departmentId, searchString, sortOrder);
 
             ViewBag.SearchedString = searchString ?? "";
             ViewBag.Departments = new SelectList(await _context.Departments.ToListAsync(), "Id", "Name",departmentId ?? 0);
@@ -65,9 +35,7 @@ namespace University.Controllers
         }
         public async Task<IActionResult> Details(int id)
         {
-            var instructor = _context.Instructors.Include(i => i.Department)
-                .Select(i => i.ConvertToViewModel())
-                .FirstOrDefault(i => i.Id == id);
+            var instructor = _instructorService.GetById(id);
 
             if(instructor is null)
             {
@@ -96,17 +64,14 @@ namespace University.Controllers
                 return View(instructorAction);
             }
             
-            _context.Instructors.Add(instructorAction.ConvertToInstructor());
-            await _context.SaveChangesAsync();
-
+            _= _instructorService.Create(instructorAction);
             return RedirectToAction(nameof(Index));
         }
 
         //GET
         public async Task<IActionResult> Edit(int id) 
         {
-            var instructor = await _context.Instructors.Include(i => i.Department)
-                .FirstOrDefaultAsync(i => i.Id == id);
+            var instructor = _instructorService.GetById(id);
 
             if(instructor is null)
             {
@@ -116,7 +81,7 @@ namespace University.Controllers
             ViewBag.Departments = new SelectList( _context.Departments.ToList(), "Id", "Name");
                 //_context.Departments.FirstOrDefaultAsync(d => d.Id == instructorInAction.DepartmentId));
 
-            return View(instructor.ConvertToInstructorAction());
+            return View(instructor);
         }
 
         [HttpPost]
@@ -127,23 +92,14 @@ namespace University.Controllers
                 return View(instructorAction);
             }
             
-            if (!InstructorExist(instructorAction.Id))
-            {
-                return NotFound();
-            }
-
-            _context.Instructors.Update(instructorAction.ConvertToInstructor());
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            var instructor = _instructorService.Update(instructorAction);
+             
+            return RedirectToAction(nameof(Details) + "/" + instructor.Id);
         }
         //Get
         public async Task<IActionResult> Delete(int id)
         {
-            var instructor = await _context.Instructors
-                .Include(i => i.Department)
-                .Select(i => i.ConvertToViewModel())
-                .FirstOrDefaultAsync(i => i.Id == id);
+            var instructor = _instructorService.GetById(id);
             
             if (instructor is null)
             {
@@ -161,20 +117,8 @@ namespace University.Controllers
                 return NotFound();
             }
             
-            if (!InstructorExist(instructor.Id))
-            {
-                return NotFound();
-            }
-
-            _context.Instructors.Remove(instructor.ConvertToInstructor());
-            await _context.SaveChangesAsync();
-
+            _instructorService.Delete(instructor.Id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool InstructorExist(int Id)
-        {
-            return _context.Instructors.Any(i => i.Id == Id);
         }
     }
     
