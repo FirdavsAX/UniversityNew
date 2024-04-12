@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using University.Data;
 using University.Services;
+using University.Services.CategoryServices;
 
 namespace University
 {
@@ -14,7 +15,8 @@ namespace University
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<UniversityDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Services.AddTransient<IInstructorService, InstructorService>();
+            builder.Services.AddScoped<IInstructorService, InstructorService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

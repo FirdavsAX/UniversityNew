@@ -4,9 +4,10 @@ namespace University.Services
 {
     public interface IInstructorService
     {
-        Task<InstructorDisplayViewModel> Create(InstructorActionViewModel instructor);
+        Task<InstructorDisplayViewModel> CreateAsync(InstructorActionViewModel instructor);
         Task<InstructorActionViewModel> Update(InstructorActionViewModel instructor);
         Task<InstructorDisplayViewModel> GetById(int id);
+        Task<InstructorActionViewModel> GetByIdToAction(int id);
         Task<IEnumerable<InstructorDisplayViewModel>> GetInstructors(
             int? departmentId = 0,
             string searchString = "",

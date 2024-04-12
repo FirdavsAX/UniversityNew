@@ -35,7 +35,7 @@ namespace University.Controllers
         }
         public async Task<IActionResult> Details(int id)
         {
-            var instructor = _instructorService.GetById(id);
+            var instructor = await _instructorService.GetById(id);
 
             if(instructor is null)
             {
@@ -64,14 +64,14 @@ namespace University.Controllers
                 return View(instructorAction);
             }
             
-            _= _instructorService.Create(instructorAction);
+            _= await _instructorService.CreateAsync(instructorAction);
             return RedirectToAction(nameof(Index));
         }
 
         //GET
         public async Task<IActionResult> Edit(int id) 
         {
-            var instructor = _instructorService.GetById(id);
+            var instructor = (await _instructorService.GetByIdToAction(id));
 
             if(instructor is null)
             {
@@ -92,15 +92,15 @@ namespace University.Controllers
                 return View(instructorAction);
             }
             
-            var instructor = _instructorService.Update(instructorAction);
+            var instructor = await _instructorService.Update(instructorAction);
              
-            return RedirectToAction(nameof(Details) + "/" + instructor.Id);
+            return RedirectToAction(nameof(Details) ,new { instructor.Id });
         }
         //Get
         public async Task<IActionResult> Delete(int id)
         {
-            var instructor = _instructorService.GetById(id);
-            
+            var instructor = await _instructorService.GetById(id);
+                
             if (instructor is null)
             {
                 return NotFound();
@@ -117,7 +117,7 @@ namespace University.Controllers
                 return NotFound();
             }
             
-            _instructorService.Delete(instructor.Id);
+            await _instructorService.Delete(instructor.Id);
             return RedirectToAction(nameof(Index));
         }
     }

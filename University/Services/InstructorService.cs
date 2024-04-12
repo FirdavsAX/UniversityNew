@@ -17,24 +17,19 @@ namespace University.Services
             this._context = _context;
         }
 
-        public async Task<InstructorDisplayViewModel> Create(InstructorActionViewModel instructor)
+        public async Task<InstructorDisplayViewModel> CreateAsync(InstructorActionViewModel instructor)
         {
             var entity = instructor.ConvertToInstructor();
             if (entity is null)
             {
                 throw new EntityNotFoundException();
             }
-            try
-            {
-                _context.Instructors.Add(entity);
-                await _context.SaveChangesAsync();
-            }
-            catch(Exception ex)
-            {
-                throw new Exception();
-            }
 
-            return null;
+            var createdInstructor = _context.Instructors.Add(entity);
+            await _context.SaveChangesAsync();
+            createdInstructor.Entity.Department= _context.Departments.FirstOrDefault(d => d.Id == createdInstructor.Entity.DepartmentId); 
+
+            return createdInstructor.Entity.ConvertToViewModel();
         }
 
         public async Task Delete(int id)
@@ -48,12 +43,13 @@ namespace University.Services
 
             _context.Instructors.Remove(instructor);
             await _context.SaveChangesAsync();
-
         }
 
         public async Task<InstructorDisplayViewModel> GetById(int id)
         {
-            var entity = _context.Instructors.FirstOrDefault(i => i.Id == id);
+            var entity = _context.Instructors
+                .Include(i => i.Department)
+                .FirstOrDefault(i => i.Id == id);
 
             if (entity is null)
             {
@@ -62,7 +58,19 @@ namespace University.Services
 
             return entity.ConvertToViewModel();
         }
+        public async Task<InstructorActionViewModel> GetByIdToAction(int id)
+        {
+            var entity = _context.Instructors
+                .Include(i => i.Department)
+                .FirstOrDefault(i => i.Id == id);
 
+            if (entity is null)
+            {
+                throw new EntityNotFoundException();
+            }
+
+            return entity.ConvertToInstructorAction();
+        }
         public async Task<IEnumerable<InstructorDisplayViewModel>> GetInstructors(int? departmentId, string? searchString,string? sortOrder)
         {
             var query = _context.Instructors.Include(i => i.Department).AsQueryable();
@@ -111,6 +119,8 @@ namespace University.Services
 
             var entity = _context.Instructors.Update(instructor.ConvertToInstructor());
             await _context.SaveChangesAsync();
+
+            entity.Entity.Department = _context.Departments.FirstOrDefault(d => d.Id == entity.Entity.DepartmentId);
 
             return entity.Entity.ConvertToInstructorAction();
         }
