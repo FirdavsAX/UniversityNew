@@ -1,5 +1,5 @@
-﻿@model UniversityWeb.Entities.Course
-
+﻿@using University.Models.CourseViewModel
+@model CourseDisplayViewModel
 @{
     ViewData["Title"] = "Details";
 }
@@ -28,6 +28,14 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Hours)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category)
+        </dd>
+
+
     </dl>
 </div>
 <div>

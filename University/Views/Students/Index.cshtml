@@ -1,11 +1,17 @@
-﻿@model IEnumerable<UniversityWeb.Entities.Student>
+﻿@using University.Models.StudentViewModels
+@model IEnumerable<StudentDisplay>
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
-
+<form asp-action="Index" asp-controller="Students" method="get">  
+    <div class="form-group">
+            <input type="text" name="searchString" />
+            <input type="submit" class="btn btn-secondary" value="Search"/>
+        </div>
+    </form>
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -13,13 +19,14 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSort"]" >
+                    @Html.DisplayNameFor(model => model.FullName)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["EmailSort"]" >
+                     @Html.DisplayNameFor(model => model.Email)
+                </a>
             </th>
             <th></th>
         </tr>
@@ -28,10 +35,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
+                @Html.DisplayFor(modelItem => item.FullName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Email)

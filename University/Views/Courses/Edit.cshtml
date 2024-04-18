@@ -1,4 +1,5 @@
-﻿@model UniversityWeb.Entities.Course
+﻿@using University.Models.CourseViewModel
+@model CourseDisplayViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -19,14 +20,22 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
+
                 <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
+                <input asp-for="Price" type="" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Hours" class="control-label"></label>
                 <input asp-for="Hours" class="form-control" />
                 <span asp-validation-for="Hours" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryId" class="form-control-plaintext"></label>
+                <select asp-for="CategoryId" asp-items="@ViewBag.Categories" class="form-control">
+
+                </select>
+                <span asp-validation-for="CategoryId" class="text-bg-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -38,7 +47,7 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
+    
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

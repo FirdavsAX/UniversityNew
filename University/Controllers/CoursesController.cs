@@ -6,35 +6,46 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using University.Data;
+using University.Entities;
+using University.Models.CourseViewModel;
+using University.Services.CategoryServices;
+using University.Services.CourseSerives;
 using UniversityWeb.Entities;
 
 namespace University.Controllers
 {
     public class CoursesController : Controller
     {
-        private readonly UniversityDbContext _context;
+        private readonly ICourseService _courseService;
+        private readonly ICategoryService _categoryService;
 
-        public CoursesController(UniversityDbContext context)
+        public CoursesController(ICourseService _courseService,ICategoryService _categoryService)
         {
-            _context = context;
+            this._courseService = _courseService;
+            this._categoryService = _categoryService; 
         }
 
         // GET: Courses
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchString, string? sortOrder,int? categoryId)
         {
-            return View(await _context.Courses.ToListAsync());
+            ViewData["NameSort"] = sortOrder == "name_asc" ? "name_desc" : "name_asc";
+            ViewData["PriceSort"] = sortOrder == "price_asc" ? "price_desc" : "price_asc";
+            ViewData["HoursSort"] = sortOrder == "hours_asc" ? "hours_desc" : "hours_asc";
+            ViewData["CategorySort"] = sortOrder == "category_asc" ? "category_desc" : "category_asc";
+
+            var courses = await _courseService.GetCoursesAsync(searchString, categoryId, sortOrder);
+
+            ViewBag.SearchString = searchString ?? "";
+            ViewBag.Categories = new SelectList(await _categoryService.GetCategoriesAsync(), "Id", "Name", categoryId ?? 0);
+
+            return View(courses);
         }
 
         // GET: Courses/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(m => m.Id == id);
+           var course = await _courseService.GetByIdAsync(id);
+            
             if (course == null)
             {
                 return NotFound();
@@ -44,8 +55,9 @@ namespace University.Controllers
         }
 
         // GET: Courses/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.Categories = new SelectList(await _categoryService.GetCategoriesAsync(), "Id", "Name");
             return View();
         }
 
@@ -54,30 +66,28 @@ namespace University.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Hours")] Course course)
+        public async Task<IActionResult> Create(CourseDisplayViewModel course)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(course);
-                await _context.SaveChangesAsync();
+                _courseService.Create(course);
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Categories = new SelectList(await _categoryService.GetCategoriesAsync(), "Id", "Name");
             return View(course);
         }
 
         // GET: Courses/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var course = await _courseService.GetByIdAsync(id);
 
-            var course = await _context.Courses.FindAsync(id);
             if (course == null)
             {
                 return NotFound();
             }
+            
+            ViewBag.Categories = new SelectList(await _categoryService.GetCategoriesAsync(), "Id", "Name");
             return View(course);
         }
 
@@ -86,7 +96,7 @@ namespace University.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Hours")] Course course)
+        public async Task<IActionResult> Edit(int id,CourseDisplayViewModel course)
         {
             if (id != course.Id)
             {
@@ -95,37 +105,19 @@ namespace University.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(course);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CourseExists(course.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _courseService.UpdateAsync(course);
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.Categories = new SelectList(await _categoryService.GetCategoriesAsync(), "Id", "Name");
             return View(course);
         }
 
         // GET: Courses/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var course = await _courseService.GetByIdAsync(id);
+            
             if (course == null)
             {
                 return NotFound();
@@ -139,19 +131,12 @@ namespace University.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var course = await _context.Courses.FindAsync(id);
-            if (course != null)
+            if (id != 0)
             {
-                _context.Courses.Remove(course);
+                await _courseService.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool CourseExists(int id)
-        {
-            return _context.Courses.Any(e => e.Id == id);
         }
     }
 }

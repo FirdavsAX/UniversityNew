@@ -1,0 +1,72 @@
+﻿@using University.Models.CourseAssignmentViewModels
+@model IEnumerable<CourseAssignmentDisplayViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<form asp-action="Index">
+    <div class="form-group" >
+        <p> 
+            <input type="text" name="searchString" value="@ViewBag.SearchString" />
+         
+            <select asp-items="@ViewBag.Courses" name="courseId">
+                <option value="0">All</option>
+            </select>
+            <select asp-items="@ViewBag.Instructors" name="instructorId">
+                <option value="0">All</option>
+            </select>
+
+            <input type="submit" value="search" />
+        </p>
+    </div>
+</form>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-route-sortOrder="@ViewData["RoomSort"]" asp-action="Index">
+                    @Html.DisplayNameFor(model => model.Room)
+                </a>
+            </th>
+            <th>
+                <a asp-route-sortOrder="@ViewData["CourseSort"]" asp-action="Index">
+                @Html.DisplayNameFor(model => model.Course)
+                </a>
+            </th>
+            <th>
+                <a asp-route-sortOrder="@ViewData["InstructorSort"]" asp-action="Index">
+                @Html.DisplayNameFor(model => model.Instructor)
+                </a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Room)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Course)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Instructor)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

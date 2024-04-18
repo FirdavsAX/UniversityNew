@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using University.Data;
 using University.Services;
 using University.Services.CategoryServices;
+using University.Services.CourseAssignmentServices;
+using University.Services.CourseSerives;
+using University.Services.StudentServices;
 
 namespace University
 {
@@ -17,6 +20,9 @@ namespace University
                 builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<IInstructorService, InstructorService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<ICourseService,CourseService>();
+            builder.Services.AddScoped<ICourseAssignmentService, CourseAssignmentService>();
+            builder.Services.AddScoped<IStudentService,StudentService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
