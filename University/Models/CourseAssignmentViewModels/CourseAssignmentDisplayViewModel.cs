@@ -6,6 +6,13 @@ namespace University.Models.CourseAssignmentViewModels
     {
         public int Id { get; set; }
         public string Room { get; set; }
+        public string? Definition
+        {
+            get
+            {
+                return Room + " " + Course + " " + Instructor + " ";
+            }
+        }
         public int Hours { get; set; }
         [DisplayName("Instructor")]
         public int InstructorId { get; set; }

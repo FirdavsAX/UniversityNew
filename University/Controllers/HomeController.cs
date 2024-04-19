@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using University.Data;
+using University.Database_Seed;
 using University.Models;
 
 namespace University.Controllers
@@ -7,7 +9,6 @@ namespace University.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;

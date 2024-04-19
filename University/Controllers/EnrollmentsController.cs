@@ -6,39 +6,40 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using University.Data;
+using University.Models.EnrollmentViewModels;
+using University.Services.CourseAssignmentServices;
+using University.Services.EnrollmentServices;
+using University.Services.StudentServices;
 using UniversityWeb.Entities;
 
 namespace University.Controllers
 {
     public class EnrollmentsController : Controller
     {
-        private readonly UniversityDbContext _context;
-
-        public EnrollmentsController(UniversityDbContext context)
+        private readonly IEnrollmentService _enrollmentService;
+        private readonly ICourseAssignmentService _courseAssignmentService;
+        private readonly IStudentService _studentService;
+        public EnrollmentsController(IEnrollmentService enrollment,ICourseAssignmentService _courseAssignmentService,IStudentService _studentService)
         {
-            _context = context;
+            _enrollmentService = enrollment;
+            this._courseAssignmentService = _courseAssignmentService;
+            this._studentService = _studentService;
         }
 
         // GET: Enrollments
         public async Task<IActionResult> Index()
         {
-            var universityDbContext = _context.Enrollments.Include(e => e.CourseAssignment).Include(e => e.Student);
-            return View(await universityDbContext.ToListAsync());
+            var enrollments = await _enrollmentService.GetEnrollments();
+            
+            return View(enrollments);
         }
 
         // GET: Enrollments/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var enrollment = await _context.Enrollments
-                .Include(e => e.CourseAssignment)
-                .Include(e => e.Student)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (enrollment == null)
+            var enrollment = await _enrollmentService.GetById(id);
+            
+            if (enrollment is null)
             {
                 return NotFound();
             }
@@ -47,10 +48,10 @@ namespace University.Controllers
         }
 
         // GET: Enrollments/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CourseAssignmentId"] = new SelectList(_context.CourseAssignments, "Id", "Id");
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Id");
+            ViewData["CourseAssignments"] = new SelectList(await _courseAssignmentService.GetCourseAssignmentsAsync(), "Id", "Definition");
+            ViewData["Students"] = new SelectList(await _studentService.GetStudents(), "Id", "FullName");
             return View();
         }
 
@@ -59,34 +60,26 @@ namespace University.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,StudentId,CourseAssignmentId")] Enrollment enrollment)
+        public async Task<IActionResult> Create(EnrollmentViewModel enrollment)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(enrollment);
-                await _context.SaveChangesAsync();
+                await _enrollmentService.CreateAsync(enrollment);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseAssignmentId"] = new SelectList(_context.CourseAssignments, "Id", "Id", enrollment.CourseAssignmentId);
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Id", enrollment.StudentId);
+            ViewData["CourseAssignments"] = new SelectList(await _courseAssignmentService.GetCourseAssignmentsAsync(), "Id", "Definition", enrollment.CourseAssignmentId);
+            ViewData["Students"] = new SelectList(await _studentService.GetStudents(), "Id", "FullName",enrollment.StudentId);
             return View(enrollment);
         }
 
         // GET: Enrollments/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var enrollment = await _enrollmentService.GetById(id);
 
-            var enrollment = await _context.Enrollments.FindAsync(id);
-            if (enrollment == null)
-            {
-                return NotFound();
-            }
-            ViewData["CourseAssignmentId"] = new SelectList(_context.CourseAssignments, "Id", "Id", enrollment.CourseAssignmentId);
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Id", enrollment.StudentId);
+            ViewData["CourseAssignments"] = new SelectList(await _courseAssignmentService.GetCourseAssignmentsAsync(), "Id", "Definition", enrollment.CourseAssignmentId);
+            ViewData["Students"] = new SelectList(await _studentService.GetStudents(), "Id", "FullName", enrollment.StudentId);
+
             return View(enrollment);
         }
 
@@ -95,7 +88,7 @@ namespace University.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,StudentId,CourseAssignmentId")] Enrollment enrollment)
+        public async Task<IActionResult> Edit(int id,EnrollmentViewModel enrollment)
         {
             if (id != enrollment.Id)
             {
@@ -106,39 +99,24 @@ namespace University.Controllers
             {
                 try
                 {
-                    _context.Update(enrollment);
-                    await _context.SaveChangesAsync();
+                    await _enrollmentService.UpdateAsync(enrollment);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!EnrollmentExists(enrollment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseAssignmentId"] = new SelectList(_context.CourseAssignments, "Id", "Id", enrollment.CourseAssignmentId);
-            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Id", enrollment.StudentId);
+            ViewData["CourseAssignments"] = new SelectList(await _courseAssignmentService.GetCourseAssignmentsAsync(), "Id", "Definition", enrollment.CourseAssignmentId);
+            ViewData["Students"] = new SelectList(await _studentService.GetStudents(), "Id", "FullName", enrollment.StudentId);
             return View(enrollment);
         }
 
         // GET: Enrollments/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var enrollment = await _enrollmentService.GetById(id);
 
-            var enrollment = await _context.Enrollments
-                .Include(e => e.CourseAssignment)
-                .Include(e => e.Student)
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (enrollment == null)
             {
                 return NotFound();
@@ -152,19 +130,10 @@ namespace University.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var enrollment = await _context.Enrollments.FindAsync(id);
-            if (enrollment != null)
-            {
-                _context.Enrollments.Remove(enrollment);
-            }
+            await _enrollmentService.DeleteAsync(id);
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EnrollmentExists(int id)
-        {
-            return _context.Enrollments.Any(e => e.Id == id);
-        }
     }
 }

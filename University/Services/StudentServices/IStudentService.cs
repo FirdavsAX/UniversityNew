@@ -9,7 +9,7 @@ namespace University.Services.StudentServices
         Task<StudentInAction> Update(StudentInAction instructor);
         Task<StudentDisplay> GetById(int id);
         Task<StudentInAction> GetByIdToAction(int id);
-        Task<IEnumerable<StudentDisplay>> GetInstructors(
+        Task<IEnumerable<StudentDisplay>> GetStudents(
             string searchString = "",
             string sortOrder = "name_asc"
             );

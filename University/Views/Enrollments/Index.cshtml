@@ -1,4 +1,5 @@
-﻿@model IEnumerable<UniversityWeb.Entities.Enrollment>
+﻿@using University.Models.EnrollmentViewModels
+@model IEnumerable<EnrollmentViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -25,10 +26,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Student.Id)
+                @Html.DisplayFor(modelItem => item.Student)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CourseAssignment.Id)
+                @Html.DisplayFor(modelItem => item.CourseAssignment)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

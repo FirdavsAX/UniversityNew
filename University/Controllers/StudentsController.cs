@@ -18,7 +18,7 @@ namespace University.Controllers
             ViewData["NameSort"] = sortOrder == "name_asc" ? "name_desc" : "name_asc";
             ViewData["EmailSort"] = sortOrder == "email_asc" ? "email_desc" : "email_asc";
 
-            var students = await _studentService.GetInstructors(searchString, sortOrder);
+            var students = await _studentService.GetStudents(searchString, sortOrder);
 
             ViewBag.SearchedString = searchString ?? "";
             return View(students);

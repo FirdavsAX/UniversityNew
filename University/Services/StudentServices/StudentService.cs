@@ -65,7 +65,7 @@ namespace University.Services.StudentServices
 
             return entity.ConvertToStudentAction();
         }
-        public async Task<IEnumerable<StudentDisplay>> GetInstructors(string? searchString, string? sortOrder)
+        public async Task<IEnumerable<StudentDisplay>> GetStudents(string? searchString, string? sortOrder)
         {
             var query = _context.Students.AsQueryable();
 
