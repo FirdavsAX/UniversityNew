@@ -70,7 +70,7 @@ namespace University.Controllers
         {
             if (ModelState.IsValid)
             {
-                _courseService.Create(course);
+                await _courseService.CreateAsync    (course);
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.Categories = new SelectList(await _categoryService.GetCategoriesAsync(), "Id", "Name");

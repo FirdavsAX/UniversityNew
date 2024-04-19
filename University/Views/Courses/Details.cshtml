@@ -7,6 +7,26 @@
 <h1>Details</h1>
 
 <div>
+    <!-- Display the image -->
+    @if (Model.Image != null)
+    {
+        <img src="data:image/jpeg;base64,@{
+            using (var ms = new MemoryStream())
+            {
+                Model.Image.CopyTo(ms);
+                byte[] imageData = ms.ToArray();
+                string base64String = Convert.ToBase64String(imageData);
+                    @base64String
+            }
+        }" alt="Image" />
+    }
+    else
+    {
+        <p>No image available</p>
+    }
+</div>
+
+<div>
     <h4>Course</h4>
     <hr />
     <dl class="row">

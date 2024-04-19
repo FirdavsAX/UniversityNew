@@ -4,6 +4,7 @@ using University.Data;
 using UniversityWeb.Entities;
 using University.Models.DepartmentViewModels;
 using System.Data;
+using University.Database_Seed;
 
 namespace University.Controllers
 {
@@ -16,7 +17,8 @@ namespace University.Controllers
         }
         public async Task<IActionResult> Index(string? searchString)
         {
-            
+            await DatabaseSeeder.SeedDatabase(_context);
+
             var departments = _context.Departments.AsQueryable();
             
             if (!string.IsNullOrWhiteSpace(searchString))

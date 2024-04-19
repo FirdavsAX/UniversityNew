@@ -13,6 +13,7 @@ namespace University.Models.CourseViewModel
         [DataType(DataType.Currency)]
         public decimal Price { get; set; }
         public int Hours { get; set; }
+        public IFormFile? Image{ get; set; }
 
         [DisplayName("Category ")]
         public int CategoryId { get; set; }

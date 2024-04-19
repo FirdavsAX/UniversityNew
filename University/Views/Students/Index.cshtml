@@ -8,23 +8,23 @@
 <h1>Index</h1>
 <form asp-action="Index" asp-controller="Students" method="get">  
     <div class="form-group">
-            <input type="text" name="searchString" />
+            <input placeholder="Search..." type="text" name="searchString" />
             <input type="submit" class="btn btn-secondary" value="Search"/>
         </div>
     </form>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="text-decoration-none btn btn-success align-middle" asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table class="table table-striped table-hover">
     <thead>
         <tr>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSort"]" >
+                <a class="text-decoration-none" asp-action="Index" asp-route-sortOrder="@ViewData["NameSort"]" >
                     @Html.DisplayNameFor(model => model.FullName)
                 </a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["EmailSort"]" >
+                <a class="text-decoration-none" asp-action="Index" asp-route-sortOrder="@ViewData["EmailSort"]" >
                      @Html.DisplayNameFor(model => model.Email)
                 </a>
             </th>
@@ -41,9 +41,9 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a class="btn btn-info" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }
