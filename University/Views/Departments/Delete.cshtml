@@ -1,0 +1,29 @@
+﻿@using University.Models.DepartmentViewModels;
+
+@model DepartmentViewModel;
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1> Delete </h1>
+<h3>Are you sure delete this department</h3>
+
+<div>
+    <h4> Department</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(d => d.Name)
+        </dt>
+        <dd class="col-sm-2">
+            @Html.DisplayFor(d => d.Name)
+        </dd>
+    </dl>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" />|
+        <a asp-action="Index">Back to list</a>
+    </form>
+</div>
+

@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UniversityWeb.Entities;
-using University.Models.InstructionViewModels;
+using University.Models.InstructorViewModels;
+using University.Models.DepartmentViewModels;
+using University.Entities;
 
 namespace University.Data
 {
@@ -12,11 +14,12 @@ namespace University.Data
         public virtual DbSet<CourseAssignment> CourseAssignments{ get; set; }
         public virtual DbSet<Student>Students{ get; set; }
         public virtual DbSet<Enrollment>Enrollments{ get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
 
         public UniversityDbContext(DbContextOptions<UniversityDbContext>options ):base(options)
         {
             
         }
-
+        
     }
 }

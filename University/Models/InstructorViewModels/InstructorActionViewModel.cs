@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using UniversityWeb.Entities;
 
-namespace University.Models.InstructionViewModels
+namespace University.Models.InstructorViewModels
 {
     public class InstructorActionViewModel
     {
@@ -15,8 +15,58 @@ namespace University.Models.InstructionViewModels
 
         [DataType(DataType.EmailAddress),Required, MaxLength(200), MinLength(5)]
         public string Email { get; set; }
+        [DisplayName("Department")]
         public int DepartmentId { get; set; }
         public string? Department { get; set; }
 
+        public static Instructor ConvertToInstructor(InstructorActionViewModel instructorActionViewModel)
+        {
+            Instructor instructor;
+            try
+            {
+                instructor = new Instructor()
+                {
+                    Id = instructorActionViewModel.Id,
+                    FirstName = instructorActionViewModel.FirstName,
+                    LastName = instructorActionViewModel.LastName,
+                    Email = instructorActionViewModel.Email,
+                    DepartmentId = instructorActionViewModel.DepartmentId
+                };
+            }
+            catch (ArgumentNullException aex)
+            {
+                throw aex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return instructor;
+        }
+        public static InstructorActionViewModel ConvertToInstructorActionViewModel(Instructor instructor)
+        {
+            InstructorActionViewModel instructorActionViewModel;
+            try
+            {
+                instructorActionViewModel = new InstructorActionViewModel()
+                {
+                    Id = instructor.Id,
+                    FirstName = instructor.FirstName,
+                    LastName = instructor.LastName,
+                    Email = instructor.Email,
+                    DepartmentId = instructor.DepartmentId,
+                    Department = instructor.Department.Name
+                };
+            }
+            catch (ArgumentNullException aex)
+            {
+                throw aex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return instructorActionViewModel;
+        }
     }
 }

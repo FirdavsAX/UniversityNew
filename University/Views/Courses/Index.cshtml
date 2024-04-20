@@ -1,0 +1,79 @@
+﻿@using University.Models.CourseViewModel
+@model IEnumerable<CourseDisplayViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="display-4 text-center mt-5 mb-4">Courses</h1>
+        </div>
+    </div>
+</div>
+
+<form asp-action="Index" class="mb-3">
+    <div class="row">
+        <div class="col-md-6">
+            <input type="text" name="searchString" value="@ViewBag.SearchString" class="form-control" placeholder="Search...">
+        </div>
+        <div class="col-md-4">
+            <select asp-items="@ViewBag.Categories" name="categoryId" class="form-control">
+                <option value="0">All Categories</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary btn-block">Search</button>
+        </div>
+    </div>
+</form>
+
+<div class="container">
+    <div class="row justify-content-between mb-3">
+        <div class="col-md-10"></div>
+        <div class="col-md-2">
+            <a asp-action="Create" class="btn btn-success btn-block">Create New</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
+                    <img src="data:image/jpeg;base64,
+                    @{
+                        using (var ms = new MemoryStream())
+                        {
+                            item.Image?.CopyTo(ms);
+                            byte[] imageData = ms.ToArray();
+                            string base64String = Convert.ToBase64String(imageData);
+                                    @base64String
+                        }
+                    }
+                        " class="card-img-top" alt="Image" />
+
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Hours:</span> @item.Hours
+                            </li>
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Category:</span> @item.Category
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                    </div>
+                </a>
+            </div>
+        </div>
+    }
+</div>

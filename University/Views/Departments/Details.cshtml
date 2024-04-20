@@ -1,0 +1,19 @@
+﻿@using University.Models.DepartmentViewModels;
+@model DepartmentViewModel;
+
+@{
+    ViewData["Title"] = "Details";
+}
+<h2> Details </h2>
+<div class="row">
+    <div class="col-sm-2">
+        <dl>
+            <dt>@Html.DisplayNameFor(model => model.Name)</dt>
+            <dd>@Html.DisplayFor(model => model.Name)</dd>
+        </dl>
+    </div>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+    <a asp-action="Index" >Back to list</a>    
+</div>
