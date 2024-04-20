@@ -15,6 +15,7 @@ namespace University.Models.InstructorViewModels
 
         [DataType(DataType.EmailAddress),Required, MaxLength(200), MinLength(5)]
         public string Email { get; set; }
+        [DisplayName("Department")]
         public int DepartmentId { get; set; }
         public string? Department { get; set; }
 

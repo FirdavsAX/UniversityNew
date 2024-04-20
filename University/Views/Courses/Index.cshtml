@@ -5,70 +5,75 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-<form asp-action="Index">
-    <div class="form-group">
-        <p>
-            <input type="text" name="searchString" value="@ViewBag.SearchString" />
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="display-4 text-center mt-5 mb-4">Courses</h1>
+        </div>
+    </div>
+</div>
 
-            <select asp-items="@ViewBag.Categories" name="categoryId">
-                <option value="0">All</option>
+<form asp-action="Index" class="mb-3">
+    <div class="row">
+        <div class="col-md-6">
+            <input type="text" name="searchString" value="@ViewBag.SearchString" class="form-control" placeholder="Search...">
+        </div>
+        <div class="col-md-4">
+            <select asp-items="@ViewBag.Categories" name="categoryId" class="form-control">
+                <option value="0">All Categories</option>
             </select>
-            <input type="submit" value="search" />
-        </p>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary btn-block">Search</button>
+        </div>
     </div>
 </form>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSort"]">
-                @Html.DisplayNameFor(model => model.Name)
+<div class="container">
+    <div class="row justify-content-between mb-3">
+        <div class="col-md-10"></div>
+        <div class="col-md-2">
+            <a asp-action="Create" class="btn btn-success btn-block">Create New</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
+                    <img src="data:image/jpeg;base64,
+                    @{
+                        using (var ms = new MemoryStream())
+                        {
+                            item.Image?.CopyTo(ms);
+                            byte[] imageData = ms.ToArray();
+                            string base64String = Convert.ToBase64String(imageData);
+                                    @base64String
+                        }
+                    }
+                        " class="card-img-top" alt="Image" />
+
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Hours:</span> @item.Hours
+                            </li>
+                            <li class="list-group-item">
+                                <span class="font-weight-bold">Category:</span> @item.Category
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                    </div>
                 </a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSort"]">
-                @Html.DisplayNameFor(model => model.Price)
-                </a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["HoursSort"]">
-                @Html.DisplayNameFor(model => model.Hours)
-                </a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["CategorySort"]">
-                    @Html.DisplayNameFor(model => model.Category)
-                </a>
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Hours)
-            </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Category)
-                </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+            </div>
+        </div>
+    }
+</div>

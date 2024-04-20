@@ -5,68 +5,80 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<form asp-action="Index">
-    <div class="form-group" >
-        <p> 
-            <input type="text" name="searchString" value="@ViewBag.SearchString" />
-         
-            <select asp-items="@ViewBag.Courses" name="courseId">
-                <option value="0">All</option>
-            </select>
-            <select asp-items="@ViewBag.Instructors" name="instructorId">
-                <option value="0">All</option>
-            </select>
-
-            <input type="submit" value="search" />
-        </p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="display-4 text-center mt-5 mb-4">Course Assignments</h1>
+        </div>
     </div>
-</form>
+    <br />
+    <hr />
+    <form asp-action="Index">
+        <div class="form-group">
+            <div class="row justify-content-center">
+                <div class="col-md-3">
+                    <input type="text" name="searchString" value="@ViewBag.SearchString" class="form-control" placeholder="Search" />
+                </div>
+                <div class="col-md-3">
+                    <select asp-items="@ViewBag.Courses" name="courseId" class="form-select">
+                        <option value="0">All Courses</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select asp-items="@ViewBag.Instructors" name="instructorId" class="form-select">
+                        <option value="0">All Instructors</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" value="Search" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </form>
+    <br />  
+    <div class="row justify-content-end mb-3">
+        <div class="col-md-2">
+            <a asp-action="Create" class="btn btn-success">Create New</a>
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                <a asp-route-sortOrder="@ViewData["RoomSort"]" asp-action="Index">
-                    @Html.DisplayNameFor(model => model.Room)
-                </a>
-            </th>
-            <th>
-                <a asp-route-sortOrder="@ViewData["CourseSort"]" asp-action="Index">
-                @Html.DisplayNameFor(model => model.Course)
-                </a>
-            </th>
-            <th>
-                <a asp-route-sortOrder="@ViewData["InstructorSort"]" asp-action="Index">
-                @Html.DisplayNameFor(model => model.Instructor)
-                </a>
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Room)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Course)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Instructor)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="shadow p-3 mb-5 bg-white rounded">
+        <table class="table table-hover table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        <a asp-route-sortOrder="@ViewData["RoomSort"]" asp-action="Index">
+                            Room
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-route-sortOrder="@ViewData["CourseSort"]" asp-action="Index">
+                            Course
+                        </a>
+                    </th>
+                    <th>
+                        <a asp-route-sortOrder="@ViewData["InstructorSort"]" asp-action="Index">
+                            Instructor
+                        </a>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Room)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Course)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Instructor)</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

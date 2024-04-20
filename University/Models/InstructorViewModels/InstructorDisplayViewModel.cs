@@ -9,6 +9,7 @@ namespace University.Models.InstructorViewModels
         [DisplayName("Full name")]
         public string FullName { get; set; }
         public string Email { get; set; }
+        [DisplayName("Department")]
         public int DepartmentId { get; set; }
         public string Department { get; set; }
        
